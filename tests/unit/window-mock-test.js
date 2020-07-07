@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupSinonSandbox } from 'ember-sinon-sandbox/test-support';
-import { default as window, reset, setupWindowMock } from 'ember-window-mock';
+import { default as window, reset, mock, setupWindowMock } from 'ember-window-mock';
 
 module('window-mock', function(hooks) {
   setupWindowMock(hooks);
@@ -384,4 +384,31 @@ module('window-mock', function(hooks) {
     });
   });
 
+  module('mock', function () {
+    test('it allows overriding non-configurable, non-writable properties', function(assert) {
+      assert.throws(() => window.document = 'foo');
+      assert.notStrictEqual(window.document, 'foo');
+
+      mock('document', 'bar');
+      assert.strictEqual(window.document, 'bar');
+    });
+
+    test('it allows overriding nested paths', function(assert) {
+      mock('navigator.plugins', 'bar');
+      assert.strictEqual(window.navigator.plugins, 'bar');
+    });
+
+    test('mocks can be reset and can be set again afterwards', function (assert) {
+      assert.strictEqual(typeof window.alert, 'function');
+      
+      mock('alert', 'bar');
+      assert.strictEqual(window.alert, 'bar');
+      
+      reset();
+      assert.strictEqual(typeof window.alert, 'function');
+
+      mock('alert', 'foo');
+      assert.strictEqual(window.alert, 'foo');
+    });
+  });
 });
