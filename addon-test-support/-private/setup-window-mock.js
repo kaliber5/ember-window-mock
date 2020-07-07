@@ -7,5 +7,5 @@ import { reset } from 'ember-window-mock';
 //
 export default function setupWindowMock(hooks = self) {
   // @TODO: assert that window mock is pristine in `hooks.before`.
-  hooks.afterEach(reset);
+  hooks.afterEach(() => reset());
 }
